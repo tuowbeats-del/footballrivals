@@ -1,0 +1,271 @@
+// Twee targets: de seed (prisma/node_modules) én de server (server/node_modules)
+// krijgen bij elke `prisma generate` dezelfde verse client
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator serverClient {
+  provider = "prisma-client-js"
+  output   = "../server/node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int               @id @default(autoincrement())
+  username      String            @unique @db.VarChar(50)
+  email         String            @unique @db.VarChar(100)
+  passwordHash  String            @db.VarChar(255)
+  role          Role              @default(PLAYER)
+  // Bot-accounts (oefentegenstanders); uitgesloten van leaderboard en online-lijst
+  isBot         Boolean           @default(false)
+  isBlocked     Boolean           @default(false)
+  isOnline      Boolean           @default(false)
+  lastSeen      DateTime          @default(now())
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  profile       Profile?
+  battlesAsP1   Battle[]          @relation("Player1")
+  battlesAsP2   Battle[]          @relation("Player2")
+  sentMessages  ChatMessage[]
+  achievements  UserAchievement[]
+  leaderboard   LeaderboardEntry?
+  draftPicks    DraftPick[]
+}
+
+enum Role {
+  PLAYER
+  ADMIN
+}
+
+model Profile {
+  id             Int      @id @default(autoincrement())
+  userId         Int      @unique
+  user           User     @relation(fields: [userId], references: [id])
+  totalBattles   Int      @default(0)
+  wins           Int      @default(0)
+  losses         Int      @default(0)
+  draws          Int      @default(0)
+  currentElo     Int      @default(1000)
+  highestElo     Int      @default(1000)
+  currentStreak  Int      @default(0)
+  highestStreak  Int      @default(0)
+  // Best simulated season (points, max 114)
+  highestScore   Float    @default(0)
+  // Number of simulated seasons finished as Champion or better (90+ pts)
+  titles         Int      @default(0)
+  avatarUrl      String?  @db.VarChar(255)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Club {
+  id          Int          @id @default(autoincrement())
+  name        String       @db.VarChar(100)
+  country     String       @db.VarChar(100)
+  logoUrl     String?      @db.VarChar(255)
+  createdAt   DateTime     @default(now())
+  clubSeasons ClubSeason[]
+}
+
+model Season {
+  id          Int           @id @default(autoincrement())
+  year        String        @db.VarChar(10)
+  label       String        @db.VarChar(50)
+  createdAt   DateTime      @default(now())
+  clubSeasons ClubSeason[]
+}
+
+model ClubSeason {
+  id         Int              @id @default(autoincrement())
+  clubId     Int
+  seasonId   Int
+  club       Club             @relation(fields: [clubId], references: [id])
+  season     Season           @relation(fields: [seasonId], references: [id])
+  players    FootballPlayer[]
+  roundsAsP1 BattleRound[]    @relation("RoundClubP1")
+  roundsAsP2 BattleRound[]    @relation("RoundClubP2")
+
+  @@unique([clubId, seasonId])
+}
+
+model FootballPlayer {
+  id           Int        @id @default(autoincrement())
+  name         String     @db.VarChar(100)
+  position     Position
+  rating       Int
+  pace         Int        @default(70)
+  shooting     Int        @default(70)
+  passing      Int        @default(70)
+  dribbling    Int        @default(70)
+  defending    Int        @default(70)
+  physical     Int        @default(70)
+  nationality  String     @db.VarChar(100)
+  clubSeasonId Int
+  clubSeason   ClubSeason @relation(fields: [clubSeasonId], references: [id])
+  draftPicks   DraftPick[]
+  createdAt    DateTime   @default(now())
+}
+
+enum Position {
+  GK
+  CB
+  LB
+  RB
+  CDM
+  CM
+  CAM
+  LM
+  RM
+  LW
+  RW
+  ST
+  CF
+}
+
+model Battle {
+  id           Int          @id @default(autoincrement())
+  player1Id    Int
+  player2Id    Int
+  player1      User         @relation("Player1", fields: [player1Id], references: [id])
+  player2      User         @relation("Player2", fields: [player2Id], references: [id])
+  status       BattleStatus @default(PENDING)
+  mode         GameMode     @default(CLASSIC)
+  // NULL = not yet chosen; set when player submits formation
+  formation1   String?      @db.VarChar(10)
+  formation2   String?      @db.VarChar(10)
+  currentRound Int          @default(0)
+  winner       Int?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  rounds       BattleRound[]
+  result       BattleResult?
+  chatMessages ChatMessage[]
+}
+
+enum BattleStatus {
+  PENDING
+  FORMATION_SELECT
+  DRAFTING
+  CALCULATING
+  FINISHED
+  CANCELLED
+}
+
+enum GameMode {
+  CLASSIC
+  EXPERT
+}
+
+model BattleRound {
+  id            Int        @id @default(autoincrement())
+  battleId      Int
+  battle        Battle     @relation(fields: [battleId], references: [id])
+  roundNumber   Int
+  // Elke speler draft uit zijn eigen willekeurige club-seizoen
+  clubSeason1Id Int
+  clubSeason2Id Int
+  clubSeason1   ClubSeason @relation("RoundClubP1", fields: [clubSeason1Id], references: [id])
+  clubSeason2   ClubSeason @relation("RoundClubP2", fields: [clubSeason2Id], references: [id])
+  picks         DraftPick[]
+  createdAt     DateTime   @default(now())
+
+  @@unique([battleId, roundNumber])
+}
+
+model DraftPick {
+  id            Int            @id @default(autoincrement())
+  battleRoundId Int
+  playerId      Int
+  userId        Int
+  pickOrder     Int
+  // Formation slot (0-10) this player was assigned to
+  slot          Int            @default(0)
+  battleRound   BattleRound    @relation(fields: [battleRoundId], references: [id])
+  player        FootballPlayer @relation(fields: [playerId], references: [id])
+  user          User           @relation(fields: [userId], references: [id])
+  createdAt     DateTime       @default(now())
+
+  @@unique([battleRoundId, userId])
+  @@unique([battleRoundId, playerId])
+}
+
+model BattleResult {
+  id               Int      @id @default(autoincrement())
+  battleId         Int      @unique
+  battle           Battle   @relation(fields: [battleId], references: [id])
+  player1Score     Float
+  player2Score     Float
+  player1Rating    Float
+  player2Rating    Float
+  player1Attack    Float
+  player2Attack    Float
+  player1Midfield  Float
+  player2Midfield  Float
+  player1Defense   Float
+  player2Defense   Float
+  player1Chemistry Float
+  player2Chemistry Float
+  player1Tier      String   @db.VarChar(30)
+  player2Tier      String   @db.VarChar(30)
+  player1Pts       Float
+  player2Pts       Float
+  // Simulated 38-match season per player: { matches: [{opp, home, gf, ga, res}], wins, draws, losses, gf, ga, points }
+  season1          Json?
+  season2          Json?
+  winnerId         Int?
+  eloChange1       Int
+  eloChange2       Int
+  createdAt        DateTime @default(now())
+}
+
+model ChatMessage {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  battleId  Int?
+  battle    Battle?  @relation(fields: [battleId], references: [id])
+  message   String   @db.Text
+  type      ChatType @default(LOBBY)
+  createdAt DateTime @default(now())
+}
+
+enum ChatType {
+  LOBBY
+  BATTLE
+}
+
+model LeaderboardEntry {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @unique
+  user       User     @relation(fields: [userId], references: [id])
+  elo        Int      @default(1000)
+  wins       Int      @default(0)
+  losses     Int      @default(0)
+  winPct     Float    @default(0)
+  seasonRank Int      @default(0)
+  updatedAt  DateTime @updatedAt
+}
+
+model Achievement {
+  id          Int               @id @default(autoincrement())
+  name        String            @db.VarChar(100)
+  description String            @db.Text
+  icon        String            @db.VarChar(50)
+  condition   String            @db.VarChar(100)
+  users       UserAchievement[]
+}
+
+model UserAchievement {
+  id            Int         @id @default(autoincrement())
+  userId        Int
+  achievementId Int
+  user          User        @relation(fields: [userId], references: [id])
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+  unlockedAt    DateTime    @default(now())
+
+  @@unique([userId, achievementId])
+}

@@ -1,0 +1,11 @@
+node_modules/
+server/.env
+server/public/
+*.log
+.DS_Store
+dist/
+.env
+# Lokale draagbare dev-database (MariaDB)
+.devdb/
+# Lokale Claude-instellingen (machine-specifiek)
+.claude/settings.local.json
