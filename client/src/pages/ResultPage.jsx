@@ -68,21 +68,23 @@ function SeasonTally({ name, season, upTo, color }) {
       </div>
       {last && (
         <div className={`text-xs font-semibold rounded-lg py-1.5 px-2 ${
+          last.derby ? 'border border-gold-500 ' : ''
+        }${
           last.res === 'W' ? 'bg-grass-500/15 text-grass-300'
           : last.res === 'D' ? 'bg-gray-500/15 text-gray-300'
           : 'bg-red-500/15 text-red-300'
         }`}>
-          {last.home ? 'vs' : '@'} {last.opp} &nbsp;{last.gf}-{last.ga}
+          {last.derby && '⚔️ DERBY: '}{last.home ? 'vs' : '@'} {last.opp} &nbsp;{last.gf}-{last.ga}
         </div>
       )}
-      {/* Vormdots */}
+      {/* Vormdots (onderlinge duels krijgen een gouden ring) */}
       <div className="flex flex-wrap justify-center gap-[3px] mt-2">
         {played.slice(-38).map((m, i) => (
           <span
             key={i}
             className={`w-1.5 h-1.5 rounded-full ${
               m.res === 'W' ? 'bg-grass-500' : m.res === 'D' ? 'bg-gray-500' : 'bg-red-500'
-            }`}
+            } ${m.derby ? 'ring-2 ring-gold-400' : ''}`}
           />
         ))}
       </div>
@@ -360,6 +362,28 @@ export default function ResultPage() {
       {/* EINDOVERZICHT */}
       {done && (
         <div className="animate-fade-in">
+          {/* Onderlinge duels */}
+          {mySeason.matches.some(m => m.derby) && (
+            <div className="card mb-4 border-gold-500/60">
+              <h3 className="font-bold text-gold-400 text-sm mb-2">⚔️ De onderlinge duels</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {mySeason.matches.map((m, i) => ({ ...m, day: i + 1 })).filter(m => m.derby).map((m, i) => (
+                  <div
+                    key={i}
+                    className={`rounded-lg px-3 py-2 text-sm font-semibold flex items-center justify-between ${
+                      m.res === 'W' ? 'bg-grass-500/15 text-grass-300'
+                      : m.res === 'D' ? 'bg-gray-500/15 text-gray-300'
+                      : 'bg-red-500/15 text-red-300'
+                    }`}
+                  >
+                    <span>Speeldag {m.day} · {m.home ? 'thuis' : 'uit'} tegen {m.opp}</span>
+                    <span className="font-black">{m.gf} - {m.ga}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Achievements */}
           {data.myAchievements?.length > 0 && (
             <div className="card mb-4 border-gold-500/50">

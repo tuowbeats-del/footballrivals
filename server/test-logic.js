@@ -1,6 +1,6 @@
 // Tijdelijke sanity-test van de spellogica (geen database nodig)
 const { FORMATIONS, FORMATION_NAMES, findSlotForPlayer, teamHasFittingPick, calculateScore } = require('./src/services/gameService');
-const { simulateSeason, getTier, determineWinner } = require('./src/services/seasonService');
+const { simulateSeason, simulateRivalSeasons, getTier, determineWinner } = require('./src/services/seasonService');
 const { calculateElo } = require('./src/services/eloService');
 
 let failures = 0;
@@ -53,6 +53,30 @@ check('Gemiddeld team is midtable (45-75)', mid.pts > 45 && mid.pts < 75);
 check('Sterk team haalt Europees/titel (75-95)', strong.pts > 75 && strong.pts < 95);
 check('Godenteam ~kampioen (> 90)', god.pts > 90);
 check('Monotoon: meer sterkte = meer punten', weak.pts < mid.pts && mid.pts < strong.pts && strong.pts < god.pts);
+
+// --- Rivaliserende seizoenen (zelfde competitie + onderlinge duels) ---
+const rivals = simulateRivalSeasons(85, 85, 'SpelerA', 'SpelerB');
+check('rivalen: beide spelen 38 wedstrijden',
+  rivals.season1.matches.length === 38 && rivals.season2.matches.length === 38);
+const derbies1 = rivals.season1.matches.filter(m => m.derby);
+const derbies2 = rivals.season2.matches.filter(m => m.derby);
+check('rivalen: precies 2 onderlinge duels per team', derbies1.length === 2 && derbies2.length === 2);
+check('rivalen: derby-uitslagen gespiegeld (mijn 2-1 = jouw 1-2)',
+  derbies1.every((m, i) => m.gf === derbies2[i].ga && m.ga === derbies2[i].gf && m.home !== derbies2[i].home));
+const derbyDays1 = rivals.season1.matches.map((m, i) => (m.derby ? i : -1)).filter(i => i >= 0);
+const derbyDays2 = rivals.season2.matches.map((m, i) => (m.derby ? i : -1)).filter(i => i >= 0);
+check('rivalen: derby valt voor beiden op dezelfde speeldag', derbyDays1.join() === derbyDays2.join());
+check('rivalen: derbynaam is de tegenstander', derbies1[0].opp === 'SpelerB' && derbies2[0].opp === 'SpelerA');
+
+// Realisme: een klein draftvoordeel mag geen gegarandeerde winst zijn
+let upsets = 0;
+const RUNS = 400;
+for (let i = 0; i < RUNS; i++) {
+  const { season1, season2 } = simulateRivalSeasons(86, 84);
+  if (determineWinner(season1, season2, 1, 2) === 2) upsets++;
+}
+console.log(`   sterkte 86 vs 84 → underdog wint ${((upsets / RUNS) * 100).toFixed(0)}% van de battles`);
+check('underdog (-2 sterkte) stunt geregeld (20-50%)', upsets / RUNS > 0.2 && upsets / RUNS < 0.5);
 
 // --- Tiers ---
 check('38 wins = Perfect Season', getTier({ wins: 38, losses: 0, points: 114 }) === 'Perfect Season');

@@ -2,7 +2,7 @@ const prisma = require('../db');
 const {
   FORMATION_NAMES, POSITION_GROUPS, calculateScore, findSlotForPlayer, teamHasFittingPick,
 } = require('../services/gameService');
-const { simulateSeason, getTier, determineWinner } = require('../services/seasonService');
+const { simulateRivalSeasons, getTier, determineWinner } = require('../services/seasonService');
 const { calculateElo } = require('../services/eloService');
 const { checkAndAward } = require('../services/achievementService');
 const { getBotId, getBotLevel, isBotId, chooseBotFormation, chooseBotPick } = require('../services/botService');
@@ -726,9 +726,15 @@ async function finalizeBattle(io, state) {
     const score1 = calculateScore(team1, formation1);
     const score2 = calculateScore(team2, formation2);
 
-    // Het hoogtepunt: beide elftallen spelen een volledig PL-seizoen
-    const season1 = simulateSeason(score1.strength);
-    const season2 = simulateSeason(score2.strength);
+    // Het hoogtepunt: beide elftallen spelen in DEZELFDE competitie,
+    // inclusief twee onderlinge duels op gedeelde speeldagen
+    const [user1, user2] = await Promise.all([
+      prisma.user.findUnique({ where: { id: battle.player1Id }, select: { username: true } }),
+      prisma.user.findUnique({ where: { id: battle.player2Id }, select: { username: true } }),
+    ]);
+    const { season1, season2 } = simulateRivalSeasons(
+      score1.strength, score2.strength, user1.username, user2.username,
+    );
     const tier1 = getTier(season1);
     const tier2 = getTier(season2);
     const winnerId = determineWinner(season1, season2, battle.player1Id, battle.player2Id);
