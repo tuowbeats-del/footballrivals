@@ -15,7 +15,7 @@
 - **Gelijkspel** is nu mogelijk (zelfde punten, doelsaldo en goals) en telt mee in de stats.
 - **8 nieuwe achievements** (o.a. GOAT, Invincible, Reuzendoder) en profielstats (titels, beste seizoen).
 
-**Data**: de seed bevat nu 14 iconische Premier League-seizoenen (Invincibles 2003-04, Treble 1998-99, Leicester 2015-16, Centurions 2017-18, Liverpool 2019-20, ...).
+**Data**: de seed bevat 22 iconische Premier League-seizoenen (Invincibles 2003-04, Treble 1998-99, Leicester 2015-16, Centurions 2017-18, Liverpool 2019-20, het treble-seizoen van Haaland 2022-23, Klinsmanns Spurs 1994-95, Leeds 2000-01, ...) met 360+ spelers. De seed is **additief**: hij wist nooit bestaande data en vult alleen aan — veilig bij elke deploy. Volledig opnieuw opbouwen kan lokaal met `FORCE_SEED=1 node seed.js`.
 
 **Techniek**: schema gewijzigd (slot op picks, seizoens-JSON op resultaten) → draai opnieuw `npx prisma db push` én `npm run seed` na het updaten. `JWT_SECRET` is nu **verplicht** in productie.
 

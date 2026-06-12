@@ -38,8 +38,8 @@ export default function Home() {
 
       <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl w-full">
         {[
-          { value: '14', label: 'Iconische seizoenen' },
-          { value: '230+', label: 'Spelers' },
+          { value: '22', label: 'Iconische seizoenen' },
+          { value: '360+', label: 'Spelers' },
           { value: '38', label: 'Wedstrijden' },
           { value: '5', label: 'Formaties' },
         ].map(s => (

@@ -13,16 +13,23 @@ const prisma = new PrismaClient();
 const SEASONS = [
   { year: '1995', label: '1994-95' },
   { year: '1996', label: '1995-96' },
+  { year: '1998', label: '1997-98' },
   { year: '1999', label: '1998-99' },
+  { year: '2001', label: '2000-01' },
+  { year: '2003', label: '2002-03' },
   { year: '2004', label: '2003-04' },
   { year: '2005', label: '2004-05' },
   { year: '2008', label: '2007-08' },
+  { year: '2009', label: '2008-09' },
+  { year: '2010', label: '2009-10' },
   { year: '2012', label: '2011-12' },
+  { year: '2013', label: '2012-13' },
   { year: '2014', label: '2013-14' },
   { year: '2016', label: '2015-16' },
   { year: '2017', label: '2016-17' },
   { year: '2018', label: '2017-18' },
   { year: '2020', label: '2019-20' },
+  { year: '2023', label: '2022-23' },
 ];
 
 const CLUB_SEASONS = [
@@ -329,6 +336,177 @@ const CLUB_SEASONS = [
       ['Mike Newell', 'ST', 75, 72, 72, 62, 66, 36, 76, 'Engeland'],
     ],
   },
+  {
+    club: 'Arsenal', country: 'Engeland', season: '1997-98', // Wengers eerste double
+    players: [
+      ['David Seaman', 'GK', 89, 50, 12, 64, 14, 88, 84, 'Engeland'],
+      ['Alex Manninger', 'GK', 76, 48, 10, 56, 12, 75, 74, 'Oostenrijk'],
+      ['Tony Adams', 'CB', 88, 66, 44, 62, 52, 91, 88, 'Engeland'],
+      ['Martin Keown', 'CB', 83, 70, 36, 58, 50, 86, 84, 'Engeland'],
+      ['Steve Bould', 'CB', 80, 58, 34, 56, 44, 84, 86, 'Engeland'],
+      ['Nigel Winterburn', 'LB', 82, 76, 48, 70, 64, 83, 76, 'Engeland'],
+      ['Lee Dixon', 'RB', 82, 76, 46, 70, 64, 84, 76, 'Engeland'],
+      ['Patrick Vieira', 'CDM', 87, 76, 64, 80, 78, 86, 90, 'Frankrijk'],
+      ['Emmanuel Petit', 'CDM', 86, 72, 66, 84, 74, 84, 84, 'Frankrijk'],
+      ['David Platt', 'CM', 80, 70, 76, 76, 72, 64, 76, 'Engeland'],
+      ['Ray Parlour', 'RM', 80, 76, 62, 76, 72, 70, 78, 'Engeland'],
+      ['Marc Overmars', 'LW', 88, 94, 80, 76, 90, 34, 62, 'Nederland'],
+      ['Dennis Bergkamp', 'CAM', 92, 76, 88, 92, 93, 40, 70, 'Nederland'],
+      ['Ian Wright', 'ST', 86, 86, 90, 66, 80, 32, 74, 'Engeland'],
+      ['Nicolas Anelka', 'ST', 83, 92, 80, 66, 82, 28, 70, 'Frankrijk'],
+      ['Christopher Wreh', 'ST', 72, 78, 68, 58, 68, 28, 70, 'Liberia'],
+    ],
+  },
+  {
+    club: 'Manchester United', country: 'Engeland', season: '2012-13', // Fergusons afscheidstitel
+    players: [
+      ['David de Gea', 'GK', 85, 54, 12, 68, 14, 84, 76, 'Spanje'],
+      ['Anders Lindegaard', 'GK', 76, 46, 10, 58, 12, 75, 74, 'Denemarken'],
+      ['Rio Ferdinand', 'CB', 84, 68, 38, 70, 60, 87, 80, 'Engeland'],
+      ['Nemanja Vidić', 'CB', 84, 62, 40, 58, 50, 88, 88, 'Servië'],
+      ['Jonny Evans', 'CB', 80, 70, 32, 64, 56, 82, 78, 'Noord-Ierland'],
+      ['Patrice Evra', 'LB', 82, 80, 48, 72, 72, 81, 78, 'Frankrijk'],
+      ['Rafael', 'RB', 80, 86, 46, 68, 74, 76, 72, 'Brazilië'],
+      ['Michael Carrick', 'CM', 85, 58, 64, 88, 76, 78, 72, 'Engeland'],
+      ['Paul Scholes', 'CM', 80, 52, 74, 86, 76, 54, 60, 'Engeland'],
+      ['Tom Cleverley', 'CM', 76, 72, 62, 76, 74, 60, 66, 'Engeland'],
+      ['Shinji Kagawa', 'CAM', 82, 78, 72, 82, 86, 42, 58, 'Japan'],
+      ['Antonio Valencia', 'RM', 83, 88, 66, 74, 78, 62, 82, 'Ecuador'],
+      ['Ashley Young', 'LM', 79, 84, 70, 76, 80, 44, 62, 'Engeland'],
+      ['Ryan Giggs', 'LM', 78, 68, 66, 80, 80, 48, 58, 'Wales'],
+      ['Wayne Rooney', 'ST', 88, 80, 88, 84, 84, 50, 84, 'Engeland'],
+      ['Robin van Persie', 'ST', 90, 78, 92, 80, 86, 34, 72, 'Nederland'],
+      ['Javier Hernández', 'ST', 81, 88, 82, 62, 74, 28, 64, 'Mexico'],
+    ],
+  },
+  {
+    club: 'Chelsea', country: 'Engeland', season: '2009-10', // 103 goals, de double van Ancelotti
+    players: [
+      ['Petr Čech', 'GK', 88, 50, 12, 66, 14, 88, 82, 'Tsjechië'],
+      ['Henrique Hilário', 'GK', 74, 44, 10, 56, 10, 73, 74, 'Portugal'],
+      ['John Terry', 'CB', 87, 64, 46, 66, 54, 90, 86, 'Engeland'],
+      ['Ricardo Carvalho', 'CB', 84, 70, 38, 68, 62, 86, 78, 'Portugal'],
+      ['Alex', 'CB', 82, 66, 52, 58, 48, 84, 88, 'Brazilië'],
+      ['Ashley Cole', 'LB', 86, 86, 52, 74, 74, 85, 76, 'Engeland'],
+      ['Branislav Ivanović', 'RB', 84, 72, 50, 66, 60, 86, 86, 'Servië'],
+      ['Michael Essien', 'CM', 85, 80, 72, 80, 78, 84, 88, 'Ghana'],
+      ['Frank Lampard', 'CM', 90, 72, 90, 88, 80, 64, 78, 'Engeland'],
+      ['Michael Ballack', 'CM', 83, 66, 78, 82, 74, 72, 84, 'Duitsland'],
+      ['John Obi Mikel', 'CDM', 78, 60, 46, 76, 68, 80, 84, 'Nigeria'],
+      ['Deco', 'CAM', 82, 68, 74, 86, 84, 52, 62, 'Portugal'],
+      ['Florent Malouda', 'LW', 84, 84, 78, 78, 84, 46, 72, 'Frankrijk'],
+      ['Joe Cole', 'RW', 80, 78, 70, 78, 86, 40, 60, 'Engeland'],
+      ['Nicolas Anelka', 'ST', 84, 82, 84, 74, 80, 30, 72, 'Frankrijk'],
+      ['Didier Drogba', 'ST', 89, 80, 92, 72, 80, 40, 92, 'Ivoorkust'],
+      ['Salomon Kalou', 'ST', 79, 86, 76, 68, 78, 34, 66, 'Ivoorkust'],
+    ],
+  },
+  {
+    club: 'Manchester City', country: 'Engeland', season: '2022-23', // Het treble-seizoen van Haaland
+    players: [
+      ['Ederson', 'GK', 88, 58, 14, 84, 18, 86, 84, 'Brazilië'],
+      ['Stefan Ortega', 'GK', 79, 48, 10, 66, 12, 78, 76, 'Duitsland'],
+      ['Rúben Dias', 'CB', 88, 70, 40, 70, 60, 90, 86, 'Portugal'],
+      ['John Stones', 'CB', 85, 74, 44, 82, 72, 85, 80, 'Engeland'],
+      ['Manuel Akanji', 'CB', 83, 80, 36, 72, 64, 85, 82, 'Zwitserland'],
+      ['Nathan Aké', 'LB', 82, 76, 38, 70, 64, 84, 80, 'Nederland'],
+      ['Kyle Walker', 'RB', 84, 92, 48, 72, 72, 80, 82, 'Engeland'],
+      ['Rodri', 'CDM', 89, 64, 70, 86, 80, 88, 86, 'Spanje'],
+      ['Kevin De Bruyne', 'CM', 91, 74, 88, 94, 86, 60, 76, 'België'],
+      ['İlkay Gündoğan', 'CM', 86, 68, 78, 88, 86, 64, 70, 'Duitsland'],
+      ['Bernardo Silva', 'RW', 87, 80, 74, 86, 92, 56, 64, 'Portugal'],
+      ['Riyad Mahrez', 'RW', 85, 80, 80, 80, 88, 36, 58, 'Algerije'],
+      ['Phil Foden', 'LW', 85, 84, 80, 82, 88, 48, 62, 'Engeland'],
+      ['Jack Grealish', 'LW', 84, 80, 70, 80, 88, 42, 70, 'Engeland'],
+      ['Julián Álvarez', 'ST', 81, 84, 80, 76, 80, 44, 70, 'Argentinië'],
+      ['Erling Haaland', 'ST', 91, 89, 94, 66, 80, 30, 88, 'Noorwegen'],
+    ],
+  },
+  {
+    club: 'Liverpool', country: 'Engeland', season: '2008-09', // Gerrard & Torres op hun best
+    players: [
+      ['Pepe Reina', 'GK', 86, 52, 12, 74, 14, 85, 80, 'Spanje'],
+      ['Diego Cavalieri', 'GK', 73, 46, 10, 56, 10, 72, 74, 'Brazilië'],
+      ['Jamie Carragher', 'CB', 85, 66, 36, 62, 52, 88, 82, 'Engeland'],
+      ['Martin Škrtel', 'CB', 81, 74, 40, 56, 48, 84, 86, 'Slovakije'],
+      ['Sami Hyypiä', 'CB', 82, 56, 42, 64, 48, 86, 84, 'Finland'],
+      ['Daniel Agger', 'CB', 80, 70, 46, 70, 60, 81, 78, 'Denemarken'],
+      ['Fábio Aurélio', 'LB', 78, 72, 56, 76, 68, 76, 70, 'Brazilië'],
+      ['Álvaro Arbeloa', 'RB', 78, 76, 42, 68, 62, 79, 76, 'Spanje'],
+      ['Javier Mascherano', 'CDM', 86, 76, 50, 76, 74, 90, 82, 'Argentinië'],
+      ['Xabi Alonso', 'CM', 87, 60, 76, 92, 78, 76, 74, 'Spanje'],
+      ['Steven Gerrard', 'CAM', 91, 76, 90, 90, 84, 70, 84, 'Engeland'],
+      ['Dirk Kuyt', 'RW', 82, 78, 76, 74, 74, 60, 82, 'Nederland'],
+      ['Albert Riera', 'LM', 78, 76, 64, 76, 76, 46, 68, 'Spanje'],
+      ['Ryan Babel', 'LW', 77, 90, 70, 64, 78, 30, 72, 'Nederland'],
+      ['Yossi Benayoun', 'RM', 79, 76, 68, 78, 84, 38, 56, 'Israël'],
+      ['Fernando Torres', 'ST', 90, 90, 92, 72, 86, 32, 78, 'Spanje'],
+    ],
+  },
+  {
+    club: 'Leeds United', country: 'Engeland', season: '2000-01', // De CL-halvefinalisten van O'Leary
+    players: [
+      ['Nigel Martyn', 'GK', 84, 50, 10, 60, 12, 83, 80, 'Engeland'],
+      ['Paul Robinson', 'GK', 76, 50, 10, 58, 12, 75, 78, 'Engeland'],
+      ['Rio Ferdinand', 'CB', 85, 76, 40, 72, 64, 87, 82, 'Engeland'],
+      ['Jonathan Woodgate', 'CB', 81, 72, 36, 66, 58, 84, 78, 'Engeland'],
+      ['Dominic Matteo', 'CB', 78, 68, 38, 66, 58, 79, 76, 'Engeland'],
+      ['Ian Harte', 'LB', 79, 68, 70, 78, 64, 76, 72, 'Ierland'],
+      ['Danny Mills', 'RB', 78, 78, 40, 62, 60, 79, 80, 'Engeland'],
+      ['Gary Kelly', 'RB', 77, 78, 42, 66, 62, 77, 74, 'Ierland'],
+      ['David Batty', 'CDM', 80, 64, 48, 76, 68, 83, 80, 'Engeland'],
+      ['Olivier Dacourt', 'CM', 81, 72, 60, 78, 74, 78, 80, 'Frankrijk'],
+      ['Lee Bowyer', 'CM', 82, 80, 74, 76, 76, 66, 76, 'Engeland'],
+      ['Eirik Bakke', 'CM', 76, 70, 60, 70, 68, 68, 78, 'Noorwegen'],
+      ['Harry Kewell', 'LW', 84, 88, 78, 76, 86, 38, 70, 'Australië'],
+      ['Jason Wilcox', 'LM', 75, 78, 60, 72, 72, 42, 62, 'Engeland'],
+      ['Alan Smith', 'ST', 80, 80, 76, 66, 72, 50, 80, 'Engeland'],
+      ['Mark Viduka', 'ST', 84, 68, 84, 72, 80, 36, 88, 'Australië'],
+      ['Robbie Keane', 'ST', 82, 84, 80, 70, 82, 32, 68, 'Ierland'],
+    ],
+  },
+  {
+    club: 'Newcastle United', country: 'Engeland', season: '2002-03', // Robsons jonge ploeg, derde plaats
+    players: [
+      ['Shay Given', 'GK', 84, 52, 10, 60, 12, 83, 78, 'Ierland'],
+      ['Steve Harper', 'GK', 75, 46, 10, 56, 10, 74, 76, 'Engeland'],
+      ['Jonathan Woodgate', 'CB', 81, 72, 36, 66, 58, 84, 78, 'Engeland'],
+      ['Andy O\'Brien', 'CB', 77, 70, 32, 58, 50, 79, 78, 'Ierland'],
+      ['Nikos Dabizas', 'CB', 76, 64, 38, 58, 48, 78, 80, 'Griekenland'],
+      ['Titus Bramble', 'CB', 75, 74, 34, 56, 48, 75, 84, 'Engeland'],
+      ['Olivier Bernard', 'LB', 75, 80, 44, 64, 64, 73, 72, 'Frankrijk'],
+      ['Robbie Elliott', 'LB', 74, 70, 42, 62, 58, 74, 74, 'Engeland'],
+      ['Gary Speed', 'CM', 81, 68, 72, 78, 70, 74, 82, 'Wales'],
+      ['Kieron Dyer', 'CM', 82, 90, 68, 76, 82, 52, 64, 'Engeland'],
+      ['Jermaine Jenas', 'CM', 78, 82, 64, 72, 74, 60, 72, 'Engeland'],
+      ['Nolberto Solano', 'RM', 80, 74, 72, 82, 78, 50, 62, 'Peru'],
+      ['Laurent Robert', 'LW', 81, 82, 78, 78, 80, 32, 64, 'Frankrijk'],
+      ['Craig Bellamy', 'ST', 84, 94, 78, 70, 80, 36, 66, 'Wales'],
+      ['Alan Shearer', 'ST', 87, 68, 92, 72, 74, 40, 88, 'Engeland'],
+      ['Shola Ameobi', 'ST', 74, 74, 70, 60, 68, 30, 80, 'Engeland'],
+    ],
+  },
+  {
+    club: 'Tottenham Hotspur', country: 'Engeland', season: '1994-95', // Het Klinsmann-seizoen
+    players: [
+      ['Ian Walker', 'GK', 78, 50, 10, 56, 12, 77, 76, 'Engeland'],
+      ['Erik Thorstvedt', 'GK', 74, 44, 10, 54, 10, 73, 76, 'Noorwegen'],
+      ['Sol Campbell', 'CB', 79, 76, 38, 58, 52, 80, 84, 'Engeland'],
+      ['Gary Mabbutt', 'CB', 80, 62, 40, 62, 50, 84, 80, 'Engeland'],
+      ['Colin Calderwood', 'CB', 76, 64, 34, 56, 46, 78, 78, 'Schotland'],
+      ['Stuart Nethercott', 'CB', 71, 66, 30, 52, 44, 72, 76, 'Engeland'],
+      ['Justin Edinburgh', 'LB', 74, 72, 38, 62, 58, 74, 72, 'Engeland'],
+      ['Dean Austin', 'RB', 73, 70, 36, 60, 56, 73, 72, 'Engeland'],
+      ['David Howells', 'CDM', 76, 64, 52, 70, 64, 76, 74, 'Engeland'],
+      ['Gheorghe Popescu', 'CM', 81, 66, 64, 80, 72, 78, 78, 'Roemenië'],
+      ['Darren Anderton', 'RM', 83, 78, 76, 84, 80, 52, 66, 'Engeland'],
+      ['Nick Barmby', 'CAM', 79, 76, 70, 76, 80, 44, 62, 'Engeland'],
+      ['Ilie Dumitrescu', 'LW', 78, 80, 72, 76, 82, 34, 60, 'Roemenië'],
+      ['Ronny Rosenthal', 'LW', 75, 84, 68, 62, 72, 30, 70, 'Israël'],
+      ['Teddy Sheringham', 'ST', 86, 66, 86, 84, 80, 42, 76, 'Engeland'],
+      ['Jürgen Klinsmann', 'ST', 89, 82, 92, 76, 84, 36, 80, 'Duitsland'],
+    ],
+  },
 ];
 
 const ACHIEVEMENTS = [
@@ -352,117 +530,126 @@ const ACHIEVEMENTS = [
 // SEED
 // =====================================================================
 
+/**
+ * Additieve seed: veilig om bij elke deploy te draaien.
+ * - Bestaande data (gebruikers, battles, spelers) wordt NOOIT gewist
+ * - Nieuwe seizoenen, clubs, club-seizoenen en achievements worden toegevoegd
+ * - Gebruikers worden alleen aangemaakt op een volledig lege database
+ * - FORCE_SEED=1 wist alles en bouwt opnieuw op (alleen voor lokaal gebruik!)
+ */
 async function main() {
-  // Veiligheidsklep voor automatische deploys: een gevulde database wordt
-  // nooit zomaar gewist. Forceren kan lokaal met FORCE_SEED=1.
-  const existingPlayers = await prisma.footballPlayer.count();
-  if (existingPlayers > 0 && process.env.FORCE_SEED !== '1') {
-    console.log(`⏭️  Database bevat al ${existingPlayers} spelers — seed overgeslagen (FORCE_SEED=1 om te forceren).`);
-    return;
+  if (process.env.FORCE_SEED === '1') {
+    console.log('🧹 FORCE_SEED=1: database volledig leegmaken...');
+    // Volgorde respecteert foreign keys
+    await prisma.draftPick.deleteMany();
+    await prisma.battleResult.deleteMany();
+    await prisma.battleRound.deleteMany();
+    await prisma.chatMessage.deleteMany();
+    await prisma.battle.deleteMany();
+    await prisma.userAchievement.deleteMany();
+    await prisma.achievement.deleteMany();
+    await prisma.footballPlayer.deleteMany();
+    await prisma.clubSeason.deleteMany();
+    await prisma.season.deleteMany();
+    await prisma.club.deleteMany();
+    await prisma.leaderboardEntry.deleteMany();
+    await prisma.profile.deleteMany();
+    await prisma.user.deleteMany();
   }
 
-  console.log('🧹 Database leegmaken...');
-  // Volgorde respecteert foreign keys
-  await prisma.draftPick.deleteMany();
-  await prisma.battleResult.deleteMany();
-  await prisma.battleRound.deleteMany();
-  await prisma.chatMessage.deleteMany();
-  await prisma.battle.deleteMany();
-  await prisma.userAchievement.deleteMany();
-  await prisma.achievement.deleteMany();
-  await prisma.footballPlayer.deleteMany();
-  await prisma.clubSeason.deleteMany();
-  await prisma.season.deleteMany();
-  await prisma.club.deleteMany();
-  await prisma.leaderboardEntry.deleteMany();
-  await prisma.profile.deleteMany();
-  await prisma.user.deleteMany();
-
-  // 1. Seizoenen
-  console.log('Seizoenen aanmaken...');
+  // 1. Seizoenen (additief, op label)
   const seasonByLabel = {};
   for (const s of SEASONS) {
-    seasonByLabel[s.label] = await prisma.season.create({ data: s });
+    let row = await prisma.season.findFirst({ where: { label: s.label } });
+    if (!row) row = await prisma.season.create({ data: s });
+    seasonByLabel[s.label] = row;
   }
 
-  // 2. Clubs (uniek op naam)
-  console.log('Clubs aanmaken...');
+  // 2. Clubs (additief, op naam)
   const clubByName = {};
   for (const cs of CLUB_SEASONS) {
     if (!clubByName[cs.club]) {
-      clubByName[cs.club] = await prisma.club.create({
-        data: { name: cs.club, country: cs.country },
-      });
+      let row = await prisma.club.findFirst({ where: { name: cs.club } });
+      if (!row) row = await prisma.club.create({ data: { name: cs.club, country: cs.country } });
+      clubByName[cs.club] = row;
     }
   }
 
-  // 3. Club-seizoenen + spelers
-  console.log('Club-seizoenen en spelers aanmaken...');
-  let totalPlayers = 0;
+  // 3. Club-seizoenen + spelers (alleen nieuwe combinaties)
+  let added = 0;
+  let addedPlayers = 0;
   for (const cs of CLUB_SEASONS) {
     const season = seasonByLabel[cs.season];
     if (!season) throw new Error(`Onbekend seizoen: ${cs.season}`);
+    const club = clubByName[cs.club];
+
+    const exists = await prisma.clubSeason.findUnique({
+      where: { clubId_seasonId: { clubId: club.id, seasonId: season.id } },
+    });
+    if (exists) continue;
 
     const clubSeason = await prisma.clubSeason.create({
-      data: { clubId: clubByName[cs.club].id, seasonId: season.id },
+      data: { clubId: club.id, seasonId: season.id },
     });
-
     await prisma.footballPlayer.createMany({
       data: cs.players.map(([name, position, rating, pace, shooting, passing, dribbling, defending, physical, nationality]) => ({
         name, position, rating, pace, shooting, passing, dribbling, defending, physical, nationality,
         clubSeasonId: clubSeason.id,
       })),
     });
-    totalPlayers += cs.players.length;
-    console.log(`   ⚽ ${cs.club} ${cs.season} (${cs.players.length} spelers)`);
+    added++;
+    addedPlayers += cs.players.length;
+    console.log(`   ⚽ Toegevoegd: ${cs.club} ${cs.season} (${cs.players.length} spelers)`);
   }
 
-  // 4. Achievements
-  console.log('Achievements aanmaken...');
-  await prisma.achievement.createMany({ data: ACHIEVEMENTS });
+  // 4. Achievements (additief, op condition)
+  for (const a of ACHIEVEMENTS) {
+    const exists = await prisma.achievement.findFirst({ where: { condition: a.condition } });
+    if (!exists) await prisma.achievement.create({ data: a });
+  }
 
-  // 5. Admin + testgebruikers
-  console.log('Gebruikers aanmaken...');
-  const adminHash = await bcrypt.hash('admin1234', 12);
-  await prisma.user.create({
-    data: {
-      username: 'Admin',
-      email: 'admin@footballrivals.be',
-      passwordHash: adminHash,
-      role: 'ADMIN',
-      profile: { create: {} },
-      leaderboard: { create: {} },
-    },
-  });
-
-  const testUsers = [
-    { username: 'testspeler1', email: 'speler1@test.be', password: 'test1234', elo: 1200 },
-    { username: 'testspeler2', email: 'speler2@test.be', password: 'test1234', elo: 1050 },
-    { username: 'ProGamer99', email: 'pro@test.be', password: 'test1234', elo: 1450 },
-    { username: 'FootballFan', email: 'fan@test.be', password: 'test1234', elo: 980 },
-    { username: 'DraftKing', email: 'king@test.be', password: 'test1234', elo: 1380 },
-  ];
-  for (const u of testUsers) {
-    const hash = await bcrypt.hash(u.password, 12);
+  // 5. Admin + testgebruikers — alleen op een lege database
+  const userCount = await prisma.user.count();
+  if (userCount === 0) {
+    console.log('Lege database: gebruikers aanmaken...');
+    const adminHash = await bcrypt.hash('admin1234', 12);
     await prisma.user.create({
       data: {
-        username: u.username,
-        email: u.email,
-        passwordHash: hash,
-        profile: { create: { currentElo: u.elo, highestElo: u.elo } },
-        leaderboard: { create: { elo: u.elo } },
+        username: 'Admin',
+        email: 'admin@footballrivals.be',
+        passwordHash: adminHash,
+        role: 'ADMIN',
+        profile: { create: {} },
+        leaderboard: { create: {} },
       },
     });
+
+    const testUsers = [
+      { username: 'testspeler1', email: 'speler1@test.be', password: 'test1234', elo: 1200 },
+      { username: 'testspeler2', email: 'speler2@test.be', password: 'test1234', elo: 1050 },
+      { username: 'ProGamer99', email: 'pro@test.be', password: 'test1234', elo: 1450 },
+      { username: 'FootballFan', email: 'fan@test.be', password: 'test1234', elo: 980 },
+      { username: 'DraftKing', email: 'king@test.be', password: 'test1234', elo: 1380 },
+    ];
+    for (const u of testUsers) {
+      const hash = await bcrypt.hash(u.password, 12);
+      await prisma.user.create({
+        data: {
+          username: u.username,
+          email: u.email,
+          passwordHash: hash,
+          profile: { create: { currentElo: u.elo, highestElo: u.elo } },
+          leaderboard: { create: { elo: u.elo } },
+        },
+      });
+    }
+    console.log('📋 Testaccounts: admin@footballrivals.be / admin1234 + 5 testspelers (test1234)');
   }
 
-  console.log('\n🎉 Seed compleet!');
-  console.log(`   Club-seizoenen: ${CLUB_SEASONS.length}`);
-  console.log(`   Spelers: ${totalPlayers}`);
-  console.log(`   Achievements: ${ACHIEVEMENTS.length}`);
-  console.log(`   Gebruikers: ${testUsers.length + 1}`);
-  console.log('\n📋 Testaccounts:');
-  console.log('   admin@footballrivals.be / admin1234 (Admin)');
-  testUsers.forEach(u => console.log(`   ${u.email} / ${u.password}`));
+  const totalClubSeasons = await prisma.clubSeason.count();
+  const totalPlayers = await prisma.footballPlayer.count();
+  console.log(`\n🎉 Seed klaar: ${added} club-seizoen(en) toegevoegd (+${addedPlayers} spelers).`);
+  console.log(`   Totaal in database: ${totalClubSeasons} club-seizoenen, ${totalPlayers} spelers.`);
 }
 
 main()
