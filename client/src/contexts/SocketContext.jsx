@@ -14,9 +14,11 @@ export function SocketProvider({ children, token }) {
     const socket = io(socketUrl, {
       auth: { token },
       transports: ['websocket', 'polling'],
+      // Oneindig blijven herverbinden (bv. na een deploy of server-herstart),
+      // met oplopende pauzes zodat we de server niet bestoken
       reconnection: true,
-      reconnectionAttempts: 5,
       reconnectionDelay: 1000,
+      reconnectionDelayMax: 10000,
     });
 
     socketRef.current = socket;
