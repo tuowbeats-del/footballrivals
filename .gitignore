@@ -9,3 +9,5 @@ dist/
 .devdb/
 # Lokale Claude-instellingen (machine-specifiek)
 .claude/settings.local.json
+# Deploy-pakket (build-artefact)
+footballrivals-deploy.zip
