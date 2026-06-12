@@ -353,6 +353,14 @@ const ACHIEVEMENTS = [
 // =====================================================================
 
 async function main() {
+  // Veiligheidsklep voor automatische deploys: een gevulde database wordt
+  // nooit zomaar gewist. Forceren kan lokaal met FORCE_SEED=1.
+  const existingPlayers = await prisma.footballPlayer.count();
+  if (existingPlayers > 0 && process.env.FORCE_SEED !== '1') {
+    console.log(`⏭️  Database bevat al ${existingPlayers} spelers — seed overgeslagen (FORCE_SEED=1 om te forceren).`);
+    return;
+  }
+
   console.log('🧹 Database leegmaken...');
   // Volgorde respecteert foreign keys
   await prisma.draftPick.deleteMany();

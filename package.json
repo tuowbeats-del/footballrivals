@@ -1,8 +1,13 @@
 {
-  "devDependencies": {
-    "prisma": "^5.22.0"
+  "name": "footballrivals",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FootballRivals (footballrivals.be) — realtime voetbal draft battles",
+  "engines": {
+    "node": ">=18"
   },
-  "dependencies": {
-    "@prisma/client": "^5.22.0"
+  "scripts": {
+    "build": "cd client && npm install && npm run build && cd ../server && npm install --omit=dev && cd ../prisma && npm install && npx prisma generate && npx prisma db push && node seed.js",
+    "start": "node server/index.js"
   }
 }
