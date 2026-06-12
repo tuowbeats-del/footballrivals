@@ -13,7 +13,10 @@ export function SocketProvider({ children, token }) {
     const socketUrl = import.meta.env.VITE_SOCKET_URL || '';
     const socket = io(socketUrl, {
       auth: { token },
-      transports: ['websocket', 'polling'],
+      // Polling eerst en daarna upgraden naar websocket: sommige hosting-proxies
+      // (zoals Combell) blokkeren directe websocket-verbindingen; met
+      // websocket-eerst zou de verbinding daar nooit tot stand komen
+      transports: ['polling', 'websocket'],
       // Oneindig blijven herverbinden (bv. na een deploy of server-herstart),
       // met oplopende pauzes zodat we de server niet bestoken
       reconnection: true,
