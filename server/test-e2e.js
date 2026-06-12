@@ -217,7 +217,7 @@ async function main() {
   // --- Leaderboard bijgewerkt ---
   const { data: lb } = await api('/api/leaderboard', 'GET', null, users[0].token);
   ok('leaderboard heeft entries', Array.isArray(lb) && lb.length >= 4);
-  ok('geen bots op het leaderboard', !lb.some(e => /RookieRik|CoachCarlo|DonPep/.test(e.user?.username || '')));
+  ok('geen bots op het leaderboard', !lb.some(e => /RookieAmorim|CoachRicky|DonCox/.test(e.user?.username || '')));
 
   // --- Botgame (oefenpotje) ---
   const profileBefore = (await api('/api/auth/me', 'GET', null, users[0].token)).data.profile;

@@ -7,10 +7,12 @@ const { findSlotForPlayer, FORMATION_NAMES, FORMATIONS, POSITION_GROUPS } = requ
  * Oefenbots in drie niveaus. Botgames zijn oefenpotjes:
  * geen ELO, geen stats, geen achievements.
  */
+// Het e-mailadres is de stabiele sleutel (verandert nooit) zodat een
+// hernoeming de bestaande bot-accounts bijwerkt in plaats van nieuwe aan te maken
 const BOTS = [
-  { username: 'RookieRik',  level: 'easy',   email: 'rookierik@footballrivals.bot' },
-  { username: 'CoachCarlo', level: 'medium', email: 'coachcarlo@footballrivals.bot' },
-  { username: 'DonPep',     level: 'hard',   email: 'donpep@footballrivals.bot' },
+  { username: 'RookieAmorim', level: 'easy',   email: 'rookierik@footballrivals.bot' },
+  { username: 'CoachRicky',   level: 'medium', email: 'coachcarlo@footballrivals.bot' },
+  { username: 'DonCox',       level: 'hard',   email: 'donpep@footballrivals.bot' },
 ];
 
 const botIdByLevel = new Map();   // 'easy' -> userId
@@ -25,8 +27,8 @@ async function ensureBots() {
     // Bots loggen nooit in; willekeurig wachtwoord
     const passwordHash = await bcrypt.hash(crypto.randomBytes(24).toString('hex'), 10);
     const user = await prisma.user.upsert({
-      where: { username: bot.username },
-      update: { isBot: true },
+      where: { email: bot.email },
+      update: { isBot: true, username: bot.username },
       create: {
         username: bot.username,
         email: bot.email,
@@ -57,7 +59,7 @@ function isBotId(userId) {
 function chooseBotFormation(level) {
   if (level === 'easy') return FORMATION_NAMES[Math.floor(Math.random() * FORMATION_NAMES.length)];
   if (level === 'medium') return Math.random() < 0.5 ? '4-4-2' : '4-3-3';
-  return Math.random() < 0.5 ? '4-3-3' : '3-5-2'; // Don Pep houdt van middenveld
+  return Math.random() < 0.5 ? '4-3-3' : '3-5-2'; // Don Cox houdt van middenveld
 }
 
 /**

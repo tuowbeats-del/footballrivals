@@ -212,9 +212,9 @@ export default function LobbyPage() {
           </div>
           <div className="flex flex-wrap gap-2">
             {[
-              { level: 'easy', name: 'Rookie Rik', icon: '😅', desc: 'Makkelijk' },
-              { level: 'medium', name: 'Coach Carlo', icon: '🎯', desc: 'Normaal' },
-              { level: 'hard', name: 'Don Pep', icon: '🧠', desc: 'Moeilijk' },
+              { level: 'easy', name: 'Rookie Amorim', icon: '😅', desc: 'Makkelijk' },
+              { level: 'medium', name: 'Coach Ricky', icon: '🎯', desc: 'Normaal' },
+              { level: 'hard', name: 'Don Cox', icon: '🧠', desc: 'Moeilijk' },
             ].map(b => (
               <button
                 key={b.level}
