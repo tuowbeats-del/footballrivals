@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build": "cd client && npm install --include=dev && npm run build && cd ../server && npm install --omit=dev && cd ../prisma && npm install && npx prisma generate",
-    "start": "cd prisma && npx prisma db push --skip-generate && node seed.js && cd .. && node server/index.js"
+    "start": "cd prisma && npx prisma db push --skip-generate && node seed.js && cd .. && node server/index.js",
+    "serve": "npm run start"
   }
 }
