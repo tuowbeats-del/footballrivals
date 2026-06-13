@@ -70,13 +70,40 @@ const POSITION_GROUPS = {
   LW: 'ATT', RW: 'ATT', ST: 'ATT', CF: 'ATT',
 };
 
+// Nederlandse weergave van de posities (interne codes blijven Engels in de database)
+const POSITION_LABELS = {
+  GK: 'DM', CB: 'CV', LB: 'LB', RB: 'RB',
+  CDM: 'VM', CM: 'CM', CAM: 'AM', LM: 'LM', RM: 'RM',
+  LW: 'LV', RW: 'RV', ST: 'SP', CF: 'SS',
+};
+
+/**
+ * Realistische compatibiliteit: op welke slots kan een speler — naast zijn
+ * eigen positie — in het echt ook uit de voeten?
+ */
+const POSITION_COMPAT = {
+  GK: [],
+  CB: [],
+  LB: ['LM'],          // back kan als wingback hoger spelen
+  RB: ['RM'],
+  CDM: ['CM'],
+  CM: ['CDM', 'CAM'],
+  CAM: ['CM', 'CF'],   // nummer 10 kan zakken of als schaduwspits spelen
+  LM: ['LW'],
+  RM: ['RW'],
+  LW: ['LM'],
+  RW: ['RM'],
+  ST: ['CF'],
+  CF: ['ST'],
+};
+
 function positionFit(playerPos, slotPos) {
   if (playerPos === slotPos) return 1.0;
-  if (POSITION_GROUPS[playerPos] === POSITION_GROUPS[slotPos]) return 0.9;
-  return 0; // strikt draften: andere zones passen niet
+  if ((POSITION_COMPAT[playerPos] || []).includes(slotPos)) return 0.9;
+  return 0; // strikt draften: alleen realistische posities
 }
 
-// Strikt: een speler past alleen op een slot met exact dezelfde positie of dezelfde zone
+// Strikt: een speler past alleen op zijn eigen positie of een realistisch alternatief
 function slotFits(playerPos, slotPos) {
   return positionFit(playerPos, slotPos) > 0;
 }
@@ -84,7 +111,7 @@ function slotFits(playerPos, slotPos) {
 /**
  * Zoek het beste open slot voor een speler binnen een formatie.
  * filledSlots: Set van bezette slotnummers. Geeft slotnummer of -1.
- * Voorkeur: exacte positiematch, daarna zelfde zone.
+ * Voorkeur: exacte positiematch, daarna een realistisch alternatief.
  */
 function findSlotForPlayer(formation, filledSlots, playerPos) {
   const form = FORMATIONS[formation];
@@ -92,8 +119,8 @@ function findSlotForPlayer(formation, filledSlots, playerPos) {
   const open = form.slots.filter(s => !filledSlots.has(s.slot));
   const exact = open.find(s => s.position === playerPos);
   if (exact) return exact.slot;
-  const zone = open.find(s => POSITION_GROUPS[s.position] === POSITION_GROUPS[playerPos]);
-  return zone ? zone.slot : -1;
+  const compat = open.find(s => (POSITION_COMPAT[playerPos] || []).includes(s.position));
+  return compat ? compat.slot : -1;
 }
 
 // Kan dit team nog minstens één speler uit deze selectie kiezen?
@@ -155,6 +182,8 @@ module.exports = {
   FORMATIONS,
   FORMATION_NAMES,
   POSITION_GROUPS,
+  POSITION_LABELS,
+  POSITION_COMPAT,
   positionFit,
   slotFits,
   findSlotForPlayer,

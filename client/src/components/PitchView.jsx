@@ -1,5 +1,5 @@
 import React from 'react';
-import { FORMATIONS } from '../utils/formations';
+import { FORMATIONS, posLabel } from '../utils/formations';
 
 /**
  * Voetbalveld met de formatie. players: object/array met slotnummer -> speler.
@@ -39,7 +39,7 @@ export default function PitchView({ formation, players = {}, accent = 'grass', c
             {p ? (
               <>
                 <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full ${accentBg} text-pitch-900 flex items-center justify-center font-black text-[10px] sm:text-xs border-2 ${accentBorder} shadow-md`}>
-                  {typeof p.rating === 'number' ? p.rating : s.pos}
+                  {typeof p.rating === 'number' ? p.rating : posLabel(s.pos)}
                 </div>
                 <span className="mt-0.5 text-[9px] sm:text-[10px] font-semibold text-white bg-black/50 rounded px-1 leading-tight max-w-full truncate">
                   {p.name?.split(' ').slice(-1)[0]}
@@ -53,7 +53,7 @@ export default function PitchView({ formation, players = {}, accent = 'grass', c
                     : 'border-white/40 text-white/60 bg-black/20'
                 }`}
               >
-                {s.pos}
+                {posLabel(s.pos)}
               </div>
             )}
           </div>

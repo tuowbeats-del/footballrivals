@@ -6,7 +6,7 @@ import api from '../services/api';
 import PitchView from '../components/PitchView';
 import { Toasts, useToasts } from '../components/shared/Toasts';
 import {
-  FORMATION_NAMES, findSlotForPlayer, POS_COLORS, getRatingColor,
+  FORMATION_NAMES, findSlotForPlayer, POS_COLORS, getRatingColor, posLabel,
 } from '../utils/formations';
 
 export default function BattlePage() {
@@ -210,7 +210,7 @@ export default function BattlePage() {
   const pickPlayer = (player) => {
     if (pickPending || iHavePicked || !socket) return;
     if (myFormation && findSlotForPlayer(myFormation, myFilled, player.position) === -1) {
-      addToast(`Een ${player.position} past niet meer in jouw ${myFormation}`);
+      addToast(`Een ${posLabel(player.position)} past niet meer in jouw ${myFormation}`);
       return;
     }
     setPickPending(true);
@@ -422,7 +422,7 @@ export default function BattlePage() {
                   >
                     <div className="flex items-center justify-between mb-1.5">
                       <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${POS_COLORS[p.position] || 'bg-gray-600 text-white'}`}>
-                        {p.position}
+                        {posLabel(p.position)}
                       </span>
                       {typeof p.rating === 'number'
                         ? <span className={`font-black text-base ${getRatingColor(p.rating)}`}>{p.rating}</span>

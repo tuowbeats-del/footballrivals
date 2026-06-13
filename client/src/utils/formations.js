@@ -57,7 +57,33 @@ export const POSITION_GROUPS = {
   LW: 'ATT', RW: 'ATT', ST: 'ATT', CF: 'ATT',
 };
 
-// Spiegel van de server: exacte positie eerst, daarna zelfde zone
+// Nederlandse weergave van de posities (interne codes blijven Engels)
+export const POS_LABELS = {
+  GK: 'DM', CB: 'CV', LB: 'LB', RB: 'RB',
+  CDM: 'VM', CM: 'CM', CAM: 'AM', LM: 'LM', RM: 'RM',
+  LW: 'LV', RW: 'RV', ST: 'SP', CF: 'SS',
+};
+
+export const posLabel = (pos) => POS_LABELS[pos] || pos;
+
+// Spiegel van server/src/services/gameService.js: realistische compatibiliteit
+export const POSITION_COMPAT = {
+  GK: [],
+  CB: [],
+  LB: ['LM'],
+  RB: ['RM'],
+  CDM: ['CM'],
+  CM: ['CDM', 'CAM'],
+  CAM: ['CM', 'CF'],
+  LM: ['LW'],
+  RM: ['RW'],
+  LW: ['LM'],
+  RW: ['RM'],
+  ST: ['CF'],
+  CF: ['ST'],
+};
+
+// Spiegel van de server: exacte positie eerst, daarna een realistisch alternatief
 export function findSlotForPlayer(formation, filledSlots, playerPos) {
   const form = FORMATIONS[formation];
   if (!form) return -1;
@@ -66,8 +92,8 @@ export function findSlotForPlayer(formation, filledSlots, playerPos) {
     .filter(s => !filledSlots.has(s.slot));
   const exact = open.find(s => s.pos === playerPos);
   if (exact) return exact.slot;
-  const zone = open.find(s => POSITION_GROUPS[s.pos] === POSITION_GROUPS[playerPos]);
-  return zone ? zone.slot : -1;
+  const compat = open.find(s => (POSITION_COMPAT[playerPos] || []).includes(s.pos));
+  return compat ? compat.slot : -1;
 }
 
 export const POS_COLORS = {

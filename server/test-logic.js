@@ -13,13 +13,17 @@ const check = (name, cond) => {
 check('5 formaties, elk 11 slots', FORMATION_NAMES.length === 5
   && FORMATION_NAMES.every(f => FORMATIONS[f].slots.length === 11));
 
-// --- Slot-logica ---
-check('GK past alleen op slot 0', findSlotForPlayer('4-3-3', new Set(), 'GK') === 0);
-check('GK past niet als slot 0 bezet', findSlotForPlayer('4-3-3', new Set([0]), 'GK') === -1);
-check('ST past op ST-slot in 4-3-3', findSlotForPlayer('4-3-3', new Set(), 'ST') === 10);
-check('ST valt terug op zone (LW) als ST bezet', findSlotForPlayer('4-3-3', new Set([10]), 'ST') === 8);
-check('CAM past op CM-slot (zelfde zone)', findSlotForPlayer('4-3-3', new Set(), 'CAM') >= 5 && findSlotForPlayer('4-3-3', new Set(), 'CAM') <= 7);
-check('ST past niet op verdediging', findSlotForPlayer('4-3-3', new Set([8, 9, 10]), 'ST') === -1);
+// --- Slot-logica (strikt: alleen realistische posities) ---
+check('DM past alleen op slot 0', findSlotForPlayer('4-3-3', new Set(), 'GK') === 0);
+check('DM past niet als slot 0 bezet', findSlotForPlayer('4-3-3', new Set([0]), 'GK') === -1);
+check('SP past op SP-slot in 4-3-3', findSlotForPlayer('4-3-3', new Set(), 'ST') === 10);
+check('SP past NIET op de vleugel (SP-slot bezet in 4-3-3)', findSlotForPlayer('4-3-3', new Set([10]), 'ST') === -1);
+check('SP valt wél terug op SS in 4-2-4', findSlotForPlayer('4-2-4', new Set([9]), 'ST') === 10);
+check('AM past op CM-slot', findSlotForPlayer('4-3-3', new Set(), 'CAM') >= 5 && findSlotForPlayer('4-3-3', new Set(), 'CAM') <= 7);
+check('CV past NIET als back (CV-slots bezet)', findSlotForPlayer('4-3-3', new Set([1, 2]), 'CB') === -1);
+check('LB schuift door naar LM in 4-4-2', findSlotForPlayer('4-4-2', new Set([3]), 'LB') === 5);
+check('LV past NIET in de spits (LV-slot bezet in 4-3-3)', findSlotForPlayer('4-3-3', new Set([8]), 'LW') === -1);
+check('SP past niet op verdediging', findSlotForPlayer('4-3-3', new Set([8, 9, 10]), 'ST') === -1);
 
 // --- teamHasFittingPick: kan deze speler nog kiezen uit deze selectie? ---
 const onlyGkOpen = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]); // alles behalve slot 0

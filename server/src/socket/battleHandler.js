@@ -1,6 +1,6 @@
 const prisma = require('../db');
 const {
-  FORMATION_NAMES, POSITION_GROUPS, calculateScore, findSlotForPlayer, teamHasFittingPick,
+  FORMATION_NAMES, POSITION_GROUPS, POSITION_LABELS, calculateScore, findSlotForPlayer, teamHasFittingPick,
 } = require('../services/gameService');
 const { simulateRivalSeasons, getTier, determineWinner } = require('../services/seasonService');
 const { calculateElo } = require('../services/eloService');
@@ -494,7 +494,7 @@ async function makePick(io, state, userId, playerId, socket = null) {
     const slot = findSlotForPlayer(formation, filled, player.position);
     if (slot === -1) {
       delete state.picks[key];
-      return emitError(`Een ${player.position} past niet meer op een open positie in jouw ${formation}`);
+      return emitError(`Een ${POSITION_LABELS[player.position] || player.position} past niet meer op een open positie in jouw ${formation}`);
     }
 
     try {
