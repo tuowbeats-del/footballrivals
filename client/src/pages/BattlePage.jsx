@@ -39,8 +39,10 @@ export default function BattlePage() {
   const [chatInput, setChatInput] = useState('');
   const chatEndRef = useRef(null);
   const spinTimerRef = useRef(null);
-  // Spelers die deze ronde al gekozen zijn (ook tijdens de spin-animatie)
+  // Spelers die deze ronde al gekozen zijn (ook tijdens de spin-animatie);
+  // op naam, zodat ook andere seizoensversies van dezelfde voetballer verdwijnen
   const pickedIdsRef = useRef(new Set());
+  const pickedNamesRef = useRef(new Set());
 
   const isP1 = players12.player1?.id === user?.id;
   const me = isP1 ? players12.player1 : players12.player2;
@@ -104,6 +106,7 @@ export default function BattlePage() {
       setPickPending(false);
       setPlayers([]);
       pickedIdsRef.current = new Set();
+      pickedNamesRef.current = new Set();
       setStatus('DRAFTING');
       setDeadline(data.deadline || null);
 
@@ -123,14 +126,18 @@ export default function BattlePage() {
         setSpinning(false);
         setCurrentRound(data);
         // Picks die tijdens de spin-animatie binnenkwamen niet opnieuw tonen
-        setPlayers((data.players || []).filter(p => !pickedIdsRef.current.has(p.id)));
+        setPlayers((data.players || []).filter(
+          p => !pickedIdsRef.current.has(p.id) && !pickedNamesRef.current.has(p.name),
+        ));
       }, 2000);
     };
 
     const onPickMade = ({ userId, slot, player }) => {
-      // Gekozen speler direct uit de keuzelijst halen (voor beide spelers)
+      // Gekozen speler direct uit de keuzelijst halen (voor beide spelers),
+      // inclusief versies van dezelfde voetballer uit andere seizoenen
       pickedIdsRef.current.add(player.id);
-      setPlayers(prev => prev.filter(p => p.id !== player.id));
+      pickedNamesRef.current.add(player.name);
+      setPlayers(prev => prev.filter(p => p.id !== player.id && p.name !== player.name));
       if (userId === user?.id) {
         setMyTeam(prev => ({ ...prev, [slot]: player }));
         setIHavePicked(true);

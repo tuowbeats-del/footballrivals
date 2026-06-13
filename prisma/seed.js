@@ -608,7 +608,17 @@ async function main() {
     if (!exists) await prisma.achievement.create({ data: a });
   }
 
-  // 5. Admin + testgebruikers — alleen op een lege database
+  // 5. Admin + testgebruikers — alleen op een lege database;
+  //    testaccounts alleen lokaal, nooit in productie
+  const isProduction = process.env.NODE_ENV === 'production';
+  const TEST_USERS = [
+    { username: 'testspeler1', email: 'speler1@test.be', password: 'test1234', elo: 1200 },
+    { username: 'testspeler2', email: 'speler2@test.be', password: 'test1234', elo: 1050 },
+    { username: 'ProGamer99', email: 'pro@test.be', password: 'test1234', elo: 1450 },
+    { username: 'FootballFan', email: 'fan@test.be', password: 'test1234', elo: 980 },
+    { username: 'DraftKing', email: 'king@test.be', password: 'test1234', elo: 1380 },
+  ];
+
   const userCount = await prisma.user.count();
   if (userCount === 0) {
     console.log('Lege database: gebruikers aanmaken...');
@@ -624,26 +634,53 @@ async function main() {
       },
     });
 
-    const testUsers = [
-      { username: 'testspeler1', email: 'speler1@test.be', password: 'test1234', elo: 1200 },
-      { username: 'testspeler2', email: 'speler2@test.be', password: 'test1234', elo: 1050 },
-      { username: 'ProGamer99', email: 'pro@test.be', password: 'test1234', elo: 1450 },
-      { username: 'FootballFan', email: 'fan@test.be', password: 'test1234', elo: 980 },
-      { username: 'DraftKing', email: 'king@test.be', password: 'test1234', elo: 1380 },
-    ];
-    for (const u of testUsers) {
-      const hash = await bcrypt.hash(u.password, 12);
-      await prisma.user.create({
-        data: {
-          username: u.username,
-          email: u.email,
-          passwordHash: hash,
-          profile: { create: { currentElo: u.elo, highestElo: u.elo } },
-          leaderboard: { create: { elo: u.elo } },
-        },
-      });
+    if (!isProduction) {
+      for (const u of TEST_USERS) {
+        const hash = await bcrypt.hash(u.password, 12);
+        await prisma.user.create({
+          data: {
+            username: u.username,
+            email: u.email,
+            passwordHash: hash,
+            profile: { create: { currentElo: u.elo, highestElo: u.elo } },
+            leaderboard: { create: { elo: u.elo } },
+          },
+        });
+      }
+      console.log('📋 Lokale testaccounts aangemaakt (5x test1234)');
     }
-    console.log('📋 Testaccounts: admin@footballrivals.be / admin1234 + 5 testspelers (test1234)');
+  }
+
+  // 6. In productie: neppe testaccounts opruimen — echte registraties blijven staan
+  if (isProduction) {
+    for (const { email } of TEST_USERS) {
+      const u = await prisma.user.findUnique({ where: { email } });
+      if (!u) continue;
+      try {
+        await prisma.$transaction([
+          prisma.chatMessage.deleteMany({ where: { userId: u.id } }),
+          prisma.userAchievement.deleteMany({ where: { userId: u.id } }),
+          prisma.leaderboardEntry.deleteMany({ where: { userId: u.id } }),
+          prisma.profile.deleteMany({ where: { userId: u.id } }),
+          prisma.user.delete({ where: { id: u.id } }),
+        ]);
+        console.log(`🗑️  Testaccount verwijderd: ${email}`);
+      } catch {
+        // Heeft al battles gespeeld (foreign keys) → blokkeren in plaats van wissen
+        await prisma.user.update({ where: { id: u.id }, data: { isBlocked: true } });
+        console.log(`🔒 Testaccount geblokkeerd (had al battles): ${email}`);
+      }
+    }
+  }
+
+  // 7. Admin-wachtwoord instellen/wijzigen via de ADMIN_PASSWORD env-variabele
+  if (process.env.ADMIN_PASSWORD) {
+    const hash = await bcrypt.hash(process.env.ADMIN_PASSWORD, 12);
+    await prisma.user.updateMany({
+      where: { email: 'admin@footballrivals.be' },
+      data: { passwordHash: hash },
+    });
+    console.log('🔑 Admin-wachtwoord bijgewerkt vanuit ADMIN_PASSWORD');
   }
 
   const totalClubSeasons = await prisma.clubSeason.count();

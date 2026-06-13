@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const path = require('path');
+const fs = require('fs');
 const { generalLimiter } = require('./middleware/rateLimiter');
 
 const authRoutes = require('./routes/auth');
@@ -51,14 +52,15 @@ app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Serve React build in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '..', 'public')));
+// Serveer de gebouwde client wanneer die aanwezig is (productie én lokaal)
+const publicDir = path.join(__dirname, '..', 'public');
+if (process.env.NODE_ENV === 'production' || fs.existsSync(path.join(publicDir, 'index.html'))) {
+  app.use(express.static(publicDir));
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/socket.io')) {
       return next();
     }
-    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+    res.sendFile(path.join(publicDir, 'index.html'));
   });
 }
 

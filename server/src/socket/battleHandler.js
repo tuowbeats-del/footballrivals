@@ -181,8 +181,15 @@ function handleBattle(io, socket, onlineUsers, _prisma) {
           const myClubSeason = isP1 ? roundRow.clubSeason1 : roundRow.clubSeason2;
           const oppClubSeason = isP1 ? roundRow.clubSeason2 : roundRow.clubSeason1;
           const pickedIds = allPicks.map(p => p.playerId);
+          // Ook op naam uitsluiten: dezelfde voetballer kan in meerdere
+          // seizoenen voorkomen maar mag maar één keer gedraft worden
+          const pickedNames = allPicks.map(p => p.player.name);
           const players = await prisma.footballPlayer.findMany({
-            where: { clubSeasonId: myClubSeason.id, id: { notIn: pickedIds } },
+            where: {
+              clubSeasonId: myClubSeason.id,
+              id: { notIn: pickedIds },
+              name: { notIn: pickedNames },
+            },
           });
           // Geen timer actief (bv. na herstart)? Start een nieuwe
           if (!state.timer) startPickTimer(io, state);
@@ -436,12 +443,16 @@ function scheduleBotPick(io, state) {
       const filled = isP1 ? state.filled1 : state.filled2;
       const clubSeasonId = isP1 ? state.clubSeason1Id : state.clubSeason2Id;
 
-      const pickedIds = await prisma.draftPick.findMany({
+      const picked = await prisma.draftPick.findMany({
         where: { battleRound: { battleId: state.battleId } },
-        select: { playerId: true },
+        select: { playerId: true, player: { select: { name: true } } },
       });
       const available = await prisma.footballPlayer.findMany({
-        where: { clubSeasonId, id: { notIn: pickedIds.map(p => p.playerId) } },
+        where: {
+          clubSeasonId,
+          id: { notIn: picked.map(p => p.playerId) },
+          name: { notIn: picked.map(p => p.player.name) },
+        },
       });
 
       const choice = chooseBotPick(available, formation, filled, getBotLevel(state.botId) || 'medium');
@@ -478,14 +489,17 @@ async function makePick(io, state, userId, playerId, socket = null) {
       return emitError('Ongeldige speler voor jouw club deze ronde');
     }
 
-    // Zelfde club kan in een latere ronde opnieuw voorkomen (bij de andere
-    // speler) — een voetballer mag maar in één team belanden
+    // Een voetballer mag maar één keer gedraft worden — ook als hij in een
+    // ander seizoen (andere spelersrij) opnieuw voorbijkomt, telt zijn naam
     const alreadyPicked = await prisma.draftPick.findFirst({
-      where: { battleRound: { battleId: state.battleId }, playerId },
+      where: {
+        battleRound: { battleId: state.battleId },
+        player: { name: player.name },
+      },
     });
     if (alreadyPicked) {
       delete state.picks[key];
-      return emitError('Die speler is al gekozen in deze battle');
+      return emitError(`${player.name} is al gekozen in deze battle (ook een andere seizoensversie telt)`);
     }
 
     const formation = isP1 ? state.formation1 : state.formation2;
@@ -554,15 +568,21 @@ async function startNextRound(io, state) {
 
     const allPicked = await prisma.draftPick.findMany({
       where: { battleRound: { battleId } },
-      select: { playerId: true },
+      select: { playerId: true, player: { select: { name: true } } },
     });
     const pickedIds = allPicked.map(p => p.playerId);
+    const pickedNames = allPicked.map(p => p.player.name);
 
     const candidates = await prisma.clubSeason.findMany({
       include: {
         club: true,
         season: true,
-        players: { where: pickedIds.length > 0 ? { id: { notIn: pickedIds } } : {} },
+        // Gepickte voetballers ook op naam uitsluiten (andere seizoensversies)
+        players: {
+          where: pickedIds.length > 0
+            ? { id: { notIn: pickedIds }, name: { notIn: pickedNames } }
+            : {},
+        },
       },
     });
 
@@ -667,9 +687,9 @@ function startPickTimer(io, state) {
         const entry = state.picks[pickKey(roundNum, userId)];
         if (entry && !entry.pending) continue;
 
-        const pickedIds = await prisma.draftPick.findMany({
+        const picked = await prisma.draftPick.findMany({
           where: { battleRound: { battleId: state.battleId } },
-          select: { playerId: true },
+          select: { playerId: true, player: { select: { name: true } } },
         });
         const isP1 = userId === state.player1Id;
         const formation = isP1 ? state.formation1 : state.formation2;
@@ -679,7 +699,8 @@ function startPickTimer(io, state) {
         const available = await prisma.footballPlayer.findMany({
           where: {
             clubSeasonId: myClubSeasonId,
-            id: { notIn: pickedIds.map(p => p.playerId) },
+            id: { notIn: picked.map(p => p.playerId) },
+            name: { notIn: picked.map(p => p.player.name) },
           },
           orderBy: { rating: 'desc' },
         });

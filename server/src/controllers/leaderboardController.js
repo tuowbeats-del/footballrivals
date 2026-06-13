@@ -10,7 +10,7 @@ const getLeaderboard = async (req, res) => {
       : { elo: 'desc' };
 
     const entries = await prisma.leaderboardEntry.findMany({
-      where: { user: { isBot: false } },
+      where: { user: { isBot: false, isBlocked: false } },
       include: {
         user: { select: { username: true, isOnline: true } },
       },

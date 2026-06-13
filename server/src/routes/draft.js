@@ -26,11 +26,12 @@ router.get('/battles/:id/round/:round/players', authenticate, pickLimiter, async
     });
     if (!battleRound) return res.status(404).json({ error: 'Ronde niet gevonden' });
 
-    const pickedPlayerIds = await prisma.draftPick.findMany({
+    const picked = await prisma.draftPick.findMany({
       where: { battleRound: { battleId: id } },
-      select: { playerId: true },
+      select: { playerId: true, player: { select: { name: true } } },
     });
-    const excludeIds = pickedPlayerIds.map(p => p.playerId);
+    const excludeIds = picked.map(p => p.playerId);
+    const excludeNames = picked.map(p => p.player.name);
 
     // Elke speler heeft zijn eigen club deze ronde
     const myClubSeasonId = battle.player1Id === req.user.id
@@ -40,7 +41,7 @@ router.get('/battles/:id/round/:round/players', authenticate, pickLimiter, async
     let players = await prisma.footballPlayer.findMany({
       where: {
         clubSeasonId: myClubSeasonId,
-        ...(excludeIds.length > 0 ? { id: { notIn: excludeIds } } : {}),
+        ...(excludeIds.length > 0 ? { id: { notIn: excludeIds }, name: { notIn: excludeNames } } : {}),
       },
       orderBy: { rating: 'desc' },
     });

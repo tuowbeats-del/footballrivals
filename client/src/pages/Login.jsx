@@ -79,12 +79,6 @@ export default function Login() {
             Registreer gratis
           </Link>
         </p>
-
-        <div className="mt-6 card bg-pitch-800/50 text-xs text-gray-500">
-          <p className="font-semibold text-gray-400 mb-1">Testaccounts:</p>
-          <p>speler1@test.be / test1234</p>
-          <p>admin@footballrivals.be / admin1234</p>
-        </div>
       </div>
     </div>
   );
